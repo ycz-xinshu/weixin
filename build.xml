@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- WARNING: Eclipse auto-generated file.
+              Any modifications will be overwritten.
+              To include a user specific buildfile here, simply create one in the same
+              directory with the processing instruction <?eclipse.ant.import?>
+              as the first entry and export the buildfile again. -->
+<project basedir="." default="build" name="weixin">
+	<target name="build" depends="clean,war" />
+    <property environment="env"/>
+    <property name="debuglevel" value="source,lines,vars"/>
+	<!-- 源码目录 -->
+	<property name="run.src" value="src" />
+	<!-- web应用目录 -->
+	<property name="weixin.home" value="WebContent" />
+	<property name="lib" value="${weixin.home}/WEB-INF/lib" />
+	<property name="classes" value="${weixin.home}/WEB-INF/classes" />
+	
+	<!-- 生成目标目录 -->
+	<property name="target" value="target" />
+	
+	<!-- 类路径 -->
+	<path id="classpath">
+		<fileset dir="${lib}" />
+		<pathelement location="${classes}" />
+	</path>
+	
+	<!-- 清理 -->
+	<target name="clean">
+		<echo message="cleaning ${ant.project.name}: ${ant.file}" />
+		<delete>
+			<fileset file="${classes}" />
+		</delete>
+	</target>
+	
+	<!-- 初始化 -->
+	<target name="init">
+		<mkdir dir="${classes}" />
+
+		<copy includeemptydirs="false" todir="${classes}">
+			<fileset dir="${run.src}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- 编译 -->
+	<target name="compile" depends="init">
+		<javac debug="true" debuglevel="${debuglevel}" destdir="${classes}"
+			includeantruntime="false" source="1.6" target="1.6">
+			<src path="${run.src}" />
+			<classpath refid="classpath" />
+		</javac>
+		<delete>
+			<fileset file="${lib}/servlet-api.jar" />
+			<fileset file="${lib}/jsp-api.jar" />
+		</delete>
+	</target>
+	
+	
+	<!-- 产生jar包 -->
+	<target name="jar" depends="compile">
+		<mkdir dir="${lib}" />
+		<jar destfile="${target}/${ant.project.name}.jar">
+			<fileset dir="${classes}" />
+		</jar>
+	</target>
+	
+	<!--将项目打成war文件 -->
+	<target name="war" depends="jar">
+		<war webxml="${weixin.home}/WEB-INF/web.xml" destfile="${target}/${ant.project.name}.war">
+			<fileset dir="${weixin.home}" casesensitive="yes">
+				<include name="**" />
+				<exclude name="*.war" />
+			</fileset>
+		</war>
+	</target>
+	
+</project>
